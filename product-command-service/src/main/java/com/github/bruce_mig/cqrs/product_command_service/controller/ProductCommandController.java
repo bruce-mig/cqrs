@@ -1,6 +1,6 @@
 package com.github.bruce_mig.cqrs.product_command_service.controller;
 
-import com.github.bruce_mig.cqrs.product_command_service.dto.ProductDto;
+import com.github.bruce_mig.cqrs.payload.ProductDto;
 import com.github.bruce_mig.cqrs.product_command_service.service.ProductCommandService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ public class ProductCommandController {
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest() // Gets the current request URI
                 .path("/{id}")         // Appends the new resource ID to the path
-                .buildAndExpand(product.id())
+                .buildAndExpand(product.getId())
                 .toUri();
 
         return ResponseEntity.created(location).body(product);

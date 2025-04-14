@@ -1,6 +1,11 @@
 spring:
   application:
     name: product-command-service
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9094
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/products_command_db
@@ -15,4 +20,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 server:
   port: 9191
+
+topic:
+  name: product-event-topic
 

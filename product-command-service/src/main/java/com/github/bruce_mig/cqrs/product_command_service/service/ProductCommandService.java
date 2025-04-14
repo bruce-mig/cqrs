@@ -1,7 +1,7 @@
 package com.github.bruce_mig.cqrs.product_command_service.service;
 
-import com.github.bruce_mig.cqrs.product_command_service.dto.ProductDto;
-import com.github.bruce_mig.cqrs.product_command_service.entity.Product;
+
+import com.github.bruce_mig.cqrs.payload.ProductDto;
 
 public interface ProductCommandService {
     ProductDto createProduct(ProductDto productDto);

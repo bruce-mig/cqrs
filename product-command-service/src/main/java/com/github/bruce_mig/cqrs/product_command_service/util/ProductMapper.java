@@ -1,6 +1,6 @@
 package com.github.bruce_mig.cqrs.product_command_service.util;
 
-import com.github.bruce_mig.cqrs.product_command_service.dto.ProductDto;
+import com.github.bruce_mig.cqrs.payload.ProductDto;
 import com.github.bruce_mig.cqrs.product_command_service.entity.Product;
 
 import java.util.List;
@@ -27,10 +27,10 @@ public class ProductMapper {
             return null;
         }
         return new Product(
-                productDto.id(),
-                productDto.name(),
-                productDto.description(),
-                productDto.price()
+                productDto.getId(),
+                productDto.getName(),
+                productDto.getDescription(),
+                productDto.getPrice()
         );
     }
 

@@ -1,6 +1,6 @@
 package com.github.bruce_mig.cqrs.product_query_service.controller;
 
-import com.github.bruce_mig.cqrs.product_query_service.dto.ProductDto;
+import com.github.bruce_mig.cqrs.payload.ProductDto;
 import com.github.bruce_mig.cqrs.product_query_service.service.ProductQueryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
