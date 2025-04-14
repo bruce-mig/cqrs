@@ -1,0 +1,27 @@
+services:
+  command-mysql:
+    image: mysql:9.2
+    container_name: command-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: $ROOT_PASS
+      MYSQL_DATABASE: $COMMAND_DB_NAME
+      MYSQL_USER: $DB_USER
+      MYSQL_PASSWORD: $DB_PASS
+    networks:
+      - $DOCKER_NET
+    ports:
+      - "3306:3306"
+  query-mysql:
+    image: mysql:9.2
+    container_name: query-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: $ROOT_PASS
+      MYSQL_DATABASE: $QUERY_DB_NAME
+      MYSQL_USER: $DB_USER
+      MYSQL_PASSWORD: $DB_PASS
+    networks:
+      - $DOCKER_NET
+    ports:
+      - "3307:3306"
+networks:
+  product-net:
