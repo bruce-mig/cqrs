@@ -9,5 +9,4 @@ import java.util.List;
 public interface ProductQueryService {
 
     List<ProductDto> getProducts();
-    void processProductEvents(ProductEvent productEvent);
 }
