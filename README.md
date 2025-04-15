@@ -1,6 +1,6 @@
 # CQRS Design Pattern with Apache Kafka & Spring Boot
 
-Welcome to the `cqrs` repository! This project demonstrates the implementation of the **CQRS (Command Query Responsibility Segregation)** design pattern in a **Products Microservice**. It leverages **Apache Kafka** for event-driven communication and **Spring Boot** for building a robust and scalable microservices.
+This project demonstrates the implementation of the **CQRS (Command Query Responsibility Segregation)** design pattern in a **Products Microservice**. It leverages **Apache Kafka** for event-driven communication and **Spring Boot** for building a robust and scalable microservices.
 
 ---
 
@@ -119,13 +119,13 @@ To run this project, you'll need:
       ```
 
 2. **Query Products**:
-    - In query service, Send a GET request to `/api/queries/products` to fetch all products.
+    - In query service, Send a GET request to `/api/v1/products` to fetch all products.
 
 3. **Update/Delete Products**:
-    - Use respective endpoints under `/api/commands/products` for update and delete operations.
+    - Use respective endpoints under `/api/v1/products` for update and delete operations.
 
 4. **Monitor Kafka Events**:
-    - Use Kafka tools to monitor the `product-events` topic for published events.
+    - Use Kafka tools to monitor the `product-event-topic` topic for published events.
 
 ---
 
