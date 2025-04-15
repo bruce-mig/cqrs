@@ -109,14 +109,14 @@ To run this project, you'll need:
 
 1. **Create a Product**:
     - In Command service, Send a POST request to `/api/commands/products` with product details.
-    - Example:
-      ```json
-      {
-        "name": "Laptop",
-        "price": 1200,
-        "quantity": 10
-      }
-      ```
+      - Example:
+        ```json
+        {
+           "name": "Book",
+           "description": "Gödel, Escher, Bach: an Eternal Golden Braid",
+           "price": 150
+        }
+        ```
 
 2. **Query Products**:
     - In query service, Send a GET request to `/api/v1/products` to fetch all products.
