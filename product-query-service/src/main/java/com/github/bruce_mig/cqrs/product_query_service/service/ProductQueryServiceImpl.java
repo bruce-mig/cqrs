@@ -28,11 +28,17 @@ public class ProductQueryServiceImpl implements ProductQueryService {
         this.repository = repository;
     }
 
-
     @Override
     public List<ProductDto> getProducts() {
         List<Product> productList = repository.findAll();
         return ProductMapper.toDtoList(productList);
+    }
+
+    @Override
+    public ProductDto getProductById(Long id) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product with id " + id + " not found"));
+        return ProductMapper.toDto(product);
     }
 
     @RetryableTopic(
@@ -47,12 +53,13 @@ public class ProductQueryServiceImpl implements ProductQueryService {
         Product product = ProductMapper.toEntity(productDto);
         Long id = productDto.getId();
 
-        if (productEvent.getEventType().equals(KafkaEventType.CREATE_PRODUCT.name())) {
-            repository.save(product);
+        switch (KafkaEventType.valueOf(productEvent.getEventType().toString())) {
+            case CREATE_PRODUCT:
+                product.setId(null);
+                repository.save(product);
+                break;
 
-        } else if (productEvent.getEventType().equals(KafkaEventType.UPDATE_PRODUCT.name())) {
-            {
-
+            case UPDATE_PRODUCT: {
                 Product existingProduct = repository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("Product with id " + id + " not found"));
 
@@ -61,8 +68,21 @@ public class ProductQueryServiceImpl implements ProductQueryService {
                 existingProduct.setDescription(product.getDescription());
 
                 repository.save(existingProduct);
+                break;
             }
+
+            case DELETE_PRODUCT: {
+                Product toDelete = repository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("Product with id " + id + " not found"));
+
+                repository.delete(toDelete);
+                break;
+            }
+
+            default:
+                throw new IllegalArgumentException("Unsupported event type: " + productEvent.getEventType());
         }
+
     }
 
     @DltHandler
