@@ -1,6 +1,5 @@
-package com.github.bruce_mig.cqrs.product_query_service.entity;
+package com.github.bruce_mig.cqrs.product_command_service.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "product_query")
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProductResponse {
     private Long id;
     private String name;
     private String description;

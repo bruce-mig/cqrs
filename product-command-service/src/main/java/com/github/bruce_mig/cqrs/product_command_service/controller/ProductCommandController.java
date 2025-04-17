@@ -1,7 +1,9 @@
 package com.github.bruce_mig.cqrs.product_command_service.controller;
 
 import com.github.bruce_mig.cqrs.payload.ProductDto;
+import com.github.bruce_mig.cqrs.product_command_service.dto.ProductResponse;
 import com.github.bruce_mig.cqrs.product_command_service.service.ProductCommandService;
+import com.github.bruce_mig.cqrs.product_command_service.util.ProductMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,7 +21,7 @@ public class ProductCommandController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto){
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductDto productDto){
         ProductDto product = commandService.createProduct(productDto);
 
         URI location = ServletUriComponentsBuilder
@@ -28,13 +30,19 @@ public class ProductCommandController {
                 .buildAndExpand(product.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(product);
+        return ResponseEntity.created(location).body(ProductMapper.toHttpResponse(product));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id,
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id,
                                                     @RequestBody ProductDto productDto){
         ProductDto updateProduct = commandService.updateProduct(id, productDto);
-        return ResponseEntity.ok().body(updateProduct);
+        return ResponseEntity.ok().body(ProductMapper.toHttpResponse(updateProduct));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
+        commandService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }

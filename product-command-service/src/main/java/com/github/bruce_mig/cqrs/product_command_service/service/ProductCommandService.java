@@ -6,4 +6,5 @@ import com.github.bruce_mig.cqrs.payload.ProductDto;
 public interface ProductCommandService {
     ProductDto createProduct(ProductDto productDto);
     ProductDto updateProduct(Long id, ProductDto productDto);
+    void deleteProduct(Long id);
 }

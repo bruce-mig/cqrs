@@ -2,10 +2,14 @@ spring:
   application:
     name: product-command-service
   kafka:
+    bootstrap-servers: "127.0.0.1:9092"
     producer:
-      bootstrap-servers: localhost:9094
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      value-serializer: "io.confluent.kafka.serializers.KafkaAvroSerializer"
+      properties:
+        schema:
+          registry:
+            url: "http://127.0.0.1:8081"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/products_command_db

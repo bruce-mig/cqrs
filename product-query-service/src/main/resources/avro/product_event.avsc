@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "ProductEvent",
+  "namespace": "com.github.bruce_mig.cqrs.payload",
+  "fields": [
+    { "name": "eventType", "type": "string" },
+    {
+      "name": "productDto",
+      "type": {
+        "type": "record",
+        "name": "ProductDto",
+        "fields": [
+          { "name": "id", "type": "long" },
+          { "name": "name", "type": "string" },
+          { "name": "description", "type": "string" },
+          { "name": "price", "type": "double" }
+        ]
+      }
+    }
+  ]
+}
