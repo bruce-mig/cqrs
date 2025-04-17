@@ -14,7 +14,11 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -34,18 +38,23 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
 
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public ProductDto createProduct(ProductDto productDto) {
         Product product = ProductMapper.toEntity(productDto);
+        product.setId(null);
         Product savedProduct = repository.save(product);
 
-        ProductEvent event = ProductEvent.builder()
-                .eventType(KafkaEventType.CREATE_PRODUCT.name())
-                .productDto(productDto)
+        ProductEvent event = ProductEvent.newBuilder()
+                .setEventType(KafkaEventType.CREATE_PRODUCT.name())
+                .setProductDto(productDto)
                 .build();
+
+        String kafkaKey = UUID.randomUUID().toString();
 
         Message<ProductEvent> message = MessageBuilder
                 .withPayload(event)
                 .setHeader(KafkaHeaders.TOPIC, topicName)
+                .setHeader(KafkaHeaders.KEY, kafkaKey)
                 .build();
 
         CompletableFuture<SendResult<String, ProductEvent>> future = kafkaTemplate.send(message);
@@ -61,6 +70,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     }
 
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public ProductDto updateProduct(Long id, ProductDto productDto) {
         Product product = ProductMapper.toEntity(productDto);
         Product existingProduct = repository.findById(id)
@@ -73,14 +83,17 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         Product updatedProduct = repository.save(existingProduct);
 
         productDto.setId(id);
-        ProductEvent event = ProductEvent.builder()
-                .eventType(KafkaEventType.UPDATE_PRODUCT.name())
-                .productDto(productDto)
+        ProductEvent event = ProductEvent.newBuilder()
+                .setEventType(KafkaEventType.UPDATE_PRODUCT.name())
+                .setProductDto(productDto)
                 .build();
+
+        String kafkaKey = UUID.randomUUID().toString();
 
         Message<ProductEvent> message = MessageBuilder
                 .withPayload(event)
                 .setHeader(KafkaHeaders.TOPIC, topicName)
+                .setHeader(KafkaHeaders.KEY, kafkaKey)
                 .build();
 
         CompletableFuture<SendResult<String, ProductEvent>> future = kafkaTemplate.send(message);
@@ -93,6 +106,38 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         });
 
         return ProductMapper.toDto(updatedProduct);
+    }
+
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+    public void deleteProduct(Long id) {
+        Product existingProduct = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product with id " + id + " not found"));
+
+        repository.delete(existingProduct);
+
+        ProductEvent event = ProductEvent.newBuilder()
+                .setEventType(KafkaEventType.DELETE_PRODUCT.name())
+                .setProductDto(ProductMapper.toDto(existingProduct))
+                .build();
+
+        String kafkaKey = UUID.randomUUID().toString();
+
+        Message<ProductEvent> message = MessageBuilder
+                .withPayload(event)
+                .setHeader(KafkaHeaders.TOPIC, topicName)
+                .setHeader(KafkaHeaders.KEY, kafkaKey)
+                .build();
+
+        CompletableFuture<SendResult<String, ProductEvent>> future = kafkaTemplate.send(message);
+        future.whenComplete((result, ex) -> {
+            if (ex == null) {
+                log.info("Sent message=[{}] to topic=[{}] with offset=[{}]", event,topicName, result.getRecordMetadata().offset());
+            } else {
+                log.error("Unable to send message=[{}] due to : {}", event, ex.getMessage());
+            }
+        });
+
     }
 
 }
