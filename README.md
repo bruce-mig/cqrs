@@ -1,4 +1,4 @@
-# CQRS Design Pattern with Apache Kafka & Spring Boot
+# CQRS Design Pattern with Apache Kafka & Apache Avro
 
 This project demonstrates the implementation of the **CQRS (Command Query Responsibility Segregation)** design pattern in a **Products Microservice**. It leverages **Apache Kafka** for event-driven communication and **Spring Boot** for building a robust and scalable microservices.
 
@@ -43,6 +43,8 @@ By integrating **Apache Kafka**, this project ensures reliable and asynchronous 
 - **Spring Data JPA**: For database interactions.
 - **MySQL** Separate databases for each microservice 
 - **Maven**: For dependency management and build automation.
+- **Apache Avro**: Schema-based serialization for lightweight and efficient data encoding. 
+- **Confluent Schema Registry**: Centralized repository for managing and evolving Avro schemas.
 
 ---
 
@@ -74,7 +76,7 @@ To run this project, you'll need:
 
 - Java 17 or higher
 - Apache Kafka installed and running
-- Maven 3.8+ installed
+- Maven 3.9+ installed
 
 ### Installation
 
@@ -85,13 +87,17 @@ To run this project, you'll need:
    ```
 
 2. Install dependencies:
-   ```bash
+```bash
+   cd product-command-service
+   mvn clean install
+   ----
+   cd product-query-service
    mvn clean install
    ```
 
 3. Configure Apache Kafka:
     - Run the following command `docker compose up -d`
-    - Ensure Kafka is running locally on port `9094`.
+    - Ensure Kafka is running locally on port `9092`.
     - Update Kafka configurations in `application.yml` if necessary.
 
 4. Run the application:
@@ -108,7 +114,7 @@ To run this project, you'll need:
 ## Usage
 
 1. **Create a Product**:
-    - In Command service, Send a POST request to `/api/commands/products` with product details.
+    - In Command service, Send a POST request to `/api/v1/products` with product details.
       - Example:
         ```json
         {
