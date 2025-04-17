@@ -2,14 +2,19 @@ spring:
   application:
     name: product-query-service
   kafka:
+    bootstrap-servers: "127.0.0.1:9092"
     consumer:
-      bootstrap-servers: localhost:9094
       group-id: productGroup
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+      value-deserializer: "io.confluent.kafka.serializers.KafkaAvroDeserializer"
       properties:
-        spring.json.trusted.packages: com.github.bruce_mig.cqrs.payload
+        schema:
+          registry:
+            url: "http://127.0.0.1:8081"
+        specific:
+          avro:
+            reader: "true"
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
